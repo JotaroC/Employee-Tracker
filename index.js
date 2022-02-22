@@ -174,7 +174,6 @@ function addRole() {
           for (let i = 0; i < results.length; i++) {
             choiceArray.push(results[i].name);
           }
-          console.log(choiceArray);
           return choiceArray;
         },
         message: "What department is this new role belongs to?",
@@ -182,26 +181,84 @@ function addRole() {
     ]).then(answer => {
       let chosenDept;
       for (let i = 0; i < results.length; i++) {
-          if (results[i].name === answer.department_ID) {
-              chosenDept = results[i];
-          }
+        if (results[i].name === answer.department_ID) {
+          chosenDept = results[i];
+        }
       }
 
       const sql =
-        `INSERT INTO employee_role (title, salary, department_id) VALUE ('${answer.title}','${answer.salary}','${chosenDept.id}')`;
+        `INSERT INTO employee_role (title, salary, department_id) 
+        VALUE ('${answer.title}','${answer.salary}','${chosenDept.id}')`;
 
       db.query(sql, (err) => {
         if (err) throw err;
         console.log(`New Role ${answer.title} has been added`);
         options();
-        }
+      }
       )
     });
   });
 }
 
 function addEmployee() {
+    inquirer.prompt([
+      {
+        name: "firstName",
+        type: "input",
+        message: "What is the first name of the new employee?",
+        validate: (value) => {
+          if (value) {
+            return true;
+          } else {
+            console.log("Please enter the first name of the new employee.");
+          }
+        }
+      },
+      {
+        name: "lastName",
+        type: "input",
+        message: "What is the last name of the new employee?",
+        validate: (value) => {
+          if (value) {
+            return true;
+          } else {
+            console.log("Please enter the last name of the new employee.");
+          }
+        }
+      },
+      {
+        name: "role_id",
+        type: "number",
+        message: "What is the role id?",
+        validate: (value) => {
+          if (value) {
+            return true;
+          } else {
+            console.log("Please enter the rolo id.");
+          }
+        }
+      },
+      {
+        name: "manager_id",
+        type: "input",
+        message: "What is the manager id?(If no manger, just skip)",
+      }
+    ]).then(answer => {
+      let manager_id;
+      if (answer.manager_id === '') {
+        manager_id = null;
+    } else {
+      manager_id = answer.manager_id;
+    }
+      const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id) 
+      VALUES ('${answer.firstName}', '${answer.lastName}', ${answer.role_id}, ${manager_id})`;
 
+      db.query(sql, (err) => {
+        if (err) throw err;
+        console.log(`New employee ${answer.firstName} ${answer.lastName} has been added`);
+        options();
+      })
+    });
 }
 
 function updateRole() {
