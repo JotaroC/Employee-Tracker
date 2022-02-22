@@ -26,6 +26,7 @@ function options() {
       'add a role',
       'add an employee',
       'update an employee role',
+      'delete a department',
       'Exit'
     ]
   }).then(answer => {
@@ -56,6 +57,10 @@ function options() {
 
       case 'update an employee role':
         updateRole();
+        break;
+
+      case 'delete a department':
+        deleteDepartment();
         break;
 
       case 'Exit':
@@ -120,7 +125,7 @@ function addDepartment() {
 
     db.query(sql, (err) => {
       if (err) throw err;
-      console.log(`${answer.department} has been added`);
+      console.log(`${answer.department} department has been added`);
       options();
     })
   });
@@ -136,6 +141,34 @@ function addEmployee() {
 
 function updateRole() {
 
+}
+
+// ------------------ Bouns -------------------
+
+// enter the id of the department and that department is deleted from the database
+function deleteDepartment() {
+  inquirer.prompt([
+    {
+      name: "department_ID",
+      type: "number",
+      message: "What department you would like to delete?(Enter the department ID)",
+      validate: (value) => {
+        if (value) {
+          return true;
+        } else {
+          console.log("Please enter the department id.");
+        }
+      }
+    }
+  ]).then(answer => {
+    const sql = `DELETE from department where id = '${answer.department_ID}'`;
+
+    db.query(sql, (err) => {
+      if (err) throw err;
+      console.log(`${answer.department} department has been added`);
+      options();
+    })
+  });
 }
 
 options();
