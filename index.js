@@ -1,5 +1,4 @@
 const inquirer = require('inquirer');
-const express = require('inquirer');
 const mysql = require('mysql2');
 
 // Connect to database
