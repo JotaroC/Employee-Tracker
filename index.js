@@ -4,32 +4,32 @@ const mysql = require('mysql2');
 
 // Connect to database
 const db = mysql.createConnection(
-    {
-      host: 'localhost',
-      user: 'root',
-      password: 'Cxzshww1.',
-      database: 'employee_db'
-    },
-    console.log(`Connected to the employee_db database.`)
-  );
+  {
+    host: 'localhost',
+    user: 'root',
+    password: 'Cxzshww1.',
+    database: 'employee_db'
+  },
+  console.log(`Connected to the employee_db database.`)
+);
 
 function options() {
   inquirer.prompt({
-    name:'options',
-    type:'list',
-    message:'What would you like to do?',
+    name: 'options',
+    type: 'list',
+    message: 'What would you like to do?',
     choices: [
       'view all departments',
-      'view all roles', 
-      'view all employees', 
+      'view all roles',
+      'view all employees',
       'add a department',
-      'add a role', 
+      'add a role',
       'add an employee',
       'update an employee role',
       'Exit'
     ]
   }).then(answer => {
-    switch(answer.options) {
+    switch (answer.options) {
       case 'view all departments':
         viewDepartment();
         break;
@@ -41,7 +41,7 @@ function options() {
       case 'view all employees':
         viewEmployee();
         break;
-      
+
       case 'add a department':
         addDepartment();
         break;
@@ -69,7 +69,7 @@ function viewDepartment() {
   const sql = 'SELECT * FROM department';
 
   db.query(sql, (err, result) => {
-    if(err) throw err;
+    if (err) throw err;
     console.log('Showing all departments');
     console.table(result);
     options();
@@ -81,7 +81,7 @@ function viewRole() {
   const sql = 'SELECT * FROM employee_role';
 
   db.query(sql, (err, result) => {
-    if(err) throw err;
+    if (err) throw err;
     console.log('Showing all roles');
     console.table(result);
     options();
@@ -93,15 +93,37 @@ function viewEmployee() {
   const sql = 'SELECT * FROM employee';
 
   db.query(sql, (err, result) => {
-    if(err) throw err;
+    if (err) throw err;
     console.log('Showing all employee information');
     console.table(result);
     options();
   })
 }
 
+// enter the name of the department and that department is added to the database
 function addDepartment() {
+  inquirer.prompt([
+    {
+      name: "department",
+      type: "input",
+      message: "What department you would like to add?",
+      validate: (value) => {
+        if (value) {
+          return true;
+        } else {
+          console.log("Please enter the department name.");
+        }
+      }
+    }
+  ]).then(answer => {
+    const sql = `INSERT INTO department (name) VALUE ('${answer.department}')`;
 
+    db.query(sql, (err) => {
+      if (err) throw err;
+      console.log(`${answer.department} has been added`);
+      options();
+    })
+  });
 }
 
 function addRole() {
