@@ -57,20 +57,47 @@ function options() {
       case 'update an employee role':
         updateRole();
         break;
+
+      case 'Exit':
+        break;
     }
   });
 }
 
+// showing department names and department ids
 function viewDepartment() {
+  const sql = 'SELECT * FROM department';
 
+  db.query(sql, (err, result) => {
+    if(err) throw err;
+    console.log('Showing all departments');
+    console.table(result);
+    options();
+  })
 }
 
+// showing the job title, role id, the department that role belongs to, and the salary for that role
 function viewRole() {
+  const sql = 'SELECT * FROM employee_role';
 
+  db.query(sql, (err, result) => {
+    if(err) throw err;
+    console.log('Showing all roles');
+    console.table(result);
+    options();
+  })
 }
 
+// showing employee data, including employee ids, first names, last names, job titles, departments, salaries, and managers that the employees report to
 function viewEmployee() {
+  const sql = 'SELECT * FROM employee';
 
+  db.query(sql, (err, result) => {
+    if(err) throw err;
+    console.log('Showing all employee information');
+    console.table(result);
+    options();
+  })
 }
 
 function addDepartment() {
@@ -86,5 +113,7 @@ function addEmployee() {
 }
 
 function updateRole() {
-  
+
 }
+
+options();
