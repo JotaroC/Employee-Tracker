@@ -28,6 +28,7 @@ function options() {
       'update an employee role',
       'delete a department',
       'delete a role',
+      'delte an employee',
       'Exit'
     ]
   }).then(answer => {
@@ -66,6 +67,10 @@ function options() {
 
       case 'delete a role':
         deleteRole();
+        break;
+
+      case 'delte an employee':
+        deleteEmployee();
         break;
 
       case 'Exit':
@@ -200,6 +205,7 @@ function addRole() {
   });
 }
 
+// enter the employee’s first name, last name, role, and manager, and that employee is added to the database
 function addEmployee() {
     inquirer.prompt([
       {
@@ -292,7 +298,7 @@ function deleteDepartment() {
   });
 }
 
-// enter the id of the department and that department is deleted from the database
+// enter the id of the role and that role is deleted from the database
 function deleteRole() {
   inquirer.prompt([
     {
@@ -318,4 +324,29 @@ function deleteRole() {
   });
 }
 
+// enter the id of the employee and that employee is deleted from the database
+function deleteEmployee() {
+  inquirer.prompt([
+    {
+      name: "employee_ID",
+      type: "number",
+      message: "Which role you would like to delete?(Enter the role ID)",
+      validate: (value) => {
+        if (value) {
+          return true;
+        } else {
+          console.log("Please enter the role id.");
+        }
+      }
+    }
+  ]).then(answer => {
+    const sql = `DELETE from employee where id = '${answer.employee_ID}'`;
+
+    db.query(sql, (err) => {
+      if (err) throw err;
+      console.log(`NO.${answer.employee_ID} employee has been deleted`);
+      options();
+    })
+  });
+}
 options();
