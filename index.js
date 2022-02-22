@@ -27,6 +27,7 @@ function options() {
       'add an employee',
       'update an employee role',
       'delete a department',
+      'delete a role',
       'Exit'
     ]
   }).then(answer => {
@@ -61,6 +62,10 @@ function options() {
 
       case 'delete a department':
         deleteDepartment();
+        break;
+
+      case 'delete a role':
+        deleteRole();
         break;
 
       case 'Exit':
@@ -131,8 +136,68 @@ function addDepartment() {
   });
 }
 
+// enter the name, salary, and department for the role and that role is added to the database
 function addRole() {
+  const sql = "SELECT * FROM department";
+  db.query(sql, (err, results) => {
+    if (err) throw err;
 
+    inquirer.prompt([
+      {
+        name: "title",
+        type: "input",
+        message: "What is the title for the new role?",
+        validate: (value) => {
+          if (value) {
+            return true;
+          } else {
+            console.log("Please enter the title.");
+          }
+        }
+      },
+      {
+        name: "salary",
+        type: "input",
+        message: "What is this new role's salary",
+        validate: (value) => {
+          if (isNaN(value) === false) {
+            return true;
+          }
+          console.log("Please enter a number");
+        }
+      },
+      {
+        name: "department_ID",
+        type: "rawlist",
+        choices: () => {
+          let choiceArray = [];
+          for (let i = 0; i < results.length; i++) {
+            choiceArray.push(results[i].name);
+          }
+          console.log(choiceArray);
+          return choiceArray;
+        },
+        message: "What department is this new role belongs to?",
+      }
+    ]).then(answer => {
+      let chosenDept;
+      for (let i = 0; i < results.length; i++) {
+          if (results[i].name === answer.department_ID) {
+              chosenDept = results[i];
+          }
+      }
+
+      const sql =
+        `INSERT INTO employee_role (title, salary, department_id) VALUE ('${answer.title}','${answer.salary}','${chosenDept.id}')`;
+
+      db.query(sql, (err) => {
+        if (err) throw err;
+        console.log(`New Role ${answer.title} has been added`);
+        options();
+        }
+      )
+    });
+  });
 }
 
 function addEmployee() {
@@ -144,14 +209,13 @@ function updateRole() {
 }
 
 // ------------------ Bouns -------------------
-
 // enter the id of the department and that department is deleted from the database
 function deleteDepartment() {
   inquirer.prompt([
     {
       name: "department_ID",
       type: "number",
-      message: "What department you would like to delete?(Enter the department ID)",
+      message: "Which department you would like to delete?(Enter the department ID)",
       validate: (value) => {
         if (value) {
           return true;
@@ -165,7 +229,33 @@ function deleteDepartment() {
 
     db.query(sql, (err) => {
       if (err) throw err;
-      console.log(`${answer.department} department has been added`);
+      console.log(`No.${answer.department_ID} department has been deleted`);
+      options();
+    })
+  });
+}
+
+// enter the id of the department and that department is deleted from the database
+function deleteRole() {
+  inquirer.prompt([
+    {
+      name: "role_ID",
+      type: "number",
+      message: "Which role you would like to delete?(Enter the role ID)",
+      validate: (value) => {
+        if (value) {
+          return true;
+        } else {
+          console.log("Please enter the role id.");
+        }
+      }
+    }
+  ]).then(answer => {
+    const sql = `DELETE from employee_role where id = '${answer.role_ID}'`;
+
+    db.query(sql, (err) => {
+      if (err) throw err;
+      console.log(`NO.${answer.role_ID} role has been deleted`);
       options();
     })
   });
