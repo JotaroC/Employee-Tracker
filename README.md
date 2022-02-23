@@ -20,7 +20,10 @@ This one is a command-line application from scratch to manage a company's employ
 
 
 ## Usage
+- create database before you run the code by enter ``mysql -u root -p`` to login
+- Then enter ``source schema.sql``, ``seeds.sql``, and ``query.sql`` to create, populate and deploy the database
 - run the application by enter  ``node index.js``
+
 
 
 The following link is the video record of application's functionalities:
